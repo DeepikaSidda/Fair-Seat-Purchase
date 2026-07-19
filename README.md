@@ -92,8 +92,7 @@ Browser ── HTTPS ──> CloudFront ──(OAC)──> S3 (private)         
 - **API:** the Express app on **Lambda** behind an **API Gateway HTTP API**, CORS-enabled.
 - **Data:** a single **DynamoDB** table with GSI1/GSI2 and TTL.
 
-See [`architecture.md`](./architecture.md) for the full purchasing-flow and component diagrams
-(with the DynamoDB operation labelled at each step).
+
 
 ---
 
