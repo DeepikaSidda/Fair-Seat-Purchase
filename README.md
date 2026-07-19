@@ -1,4 +1,16 @@
 # The Fair Seat Purchase — DynamoDB Ticket Purchasing System
+## The problem
+
+When a popular event goes on sale, thousands of fans contend for the same seats in the same
+instant. The system must guarantee **sold-exactly-once** under that contention, expire abandoned
+holds, and instantly return released seats to inventory — all while feeling fast. This is a
+distributed inventory-control / locking problem, solved here with DynamoDB **conditional writes**
+and **transactions** (no external lock service).
+
+Lifecycle: **browse → select → hold (atomic) → pay → confirm _or_ release on timeout**.
+
+
+---
 
 A DynamoDB-powered ticket-purchasing system for a 100,000-seat venue that stays **correct under
 extreme concurrency**: every seat is **sold exactly once** — never oversold, never lost — while
