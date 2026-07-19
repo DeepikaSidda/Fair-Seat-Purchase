@@ -35,7 +35,6 @@ Lifecycle: **browse → select → hold (atomic) → pay → confirm _or_ releas
 | 1 | **NoSQL Workbench data model** (valid, importable) | [`fair-seat-purchase.json`](./fair-seat-purchase.json) |
 | 2 | **Design document** (explains *why*, not just *what*) | [`DESIGN.md`](./DESIGN.md) |
 | 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv) (also embedded in `DESIGN.md` §2) |
-| — | Architecture diagrams (Mermaid + rendered SVG) | [`architecture.md`](./architecture.md), `architecture-1.svg`, `architecture-2.svg` |
 
 ### Import the NoSQL Workbench model
 1. Open **NoSQL Workbench for Amazon DynamoDB** → **Import data model**.
