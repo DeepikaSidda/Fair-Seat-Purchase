@@ -23,13 +23,7 @@ live: 🟩 available · 🟪 booking in progress (held) · 🟥 booked (sold).
 | 2 | **Design document** (explains *why*, not just *what*) | [`DESIGN.md`](./DESIGN.md) |
 | 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv)  |
 
-### Import the NoSQL Workbench model
-1. Open **NoSQL Workbench for Amazon DynamoDB** → **Import data model**.
-2. Choose [`fair-seat-purchase.json`](./fair-seat-purchase.json).
 
-It imports one table (`FairSeatPurchase`) with **GSI1** (seat map) and **GSI2** (expired-hold
-sweep), and ≥5 representative sample items per table/index — seats in **available / held / sold**
-states and transactions in **pending / paid+confirmed / failed** states.
 ------
 
 
