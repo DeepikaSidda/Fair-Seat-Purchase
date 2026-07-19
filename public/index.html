@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>DynamoDB Football Data Modeling Challenges</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    ACCESSIBILITY NOTES
+    - Skip link jumps keyboard/screen-reader users straight to the main content.
+    - Two-level navigation: a VENUE OVERVIEW of tier-grouped section cards, and a
+      SECTION VIEW with the seat map. Both are single-page views toggled with the
+      `hidden` attribute so only one is exposed to assistive technology at a time.
+    - Section availability is conveyed by text ("183 / 200 available") AND a
+      visual meter AND a per-tier accent that is always paired with tier text —
+      never colour alone.
+    - The seat map is a keyboard grid: Tab to enter, Arrow keys to move,
+      Home/End jump within a row, Enter/Space to hold. Each seat button carries a
+      full descriptive label including section, row, seat and price.
+    - Live regions announce availability, holds, countdown milestones, errors,
+      and confirmation. A polite region carries status; an assertive role="alert"
+      region is reserved for errors.
+    - The hold and confirmation steps are focus-trapped dialogs (role="dialog",
+      aria-modal) with Escape-to-close and focus return.
+
+    AUTH: the "Fan ID" field is a STAND-IN for the upstream waiting-room
+    eligibility token; it is sent as the `x-fan-id` header. Placeholder only.
+  -->
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">⚽</span>
+        <div>
+          <h1>DynamoDB Football Data Modeling Challenges</h1>
+          <p class="subtitle">Fair seat purchasing on a single DynamoDB table — browse by tier, hold, and buy.</p>
+        </div>
+      </div>
+      <div class="fan-field">
+        <label for="fanId">Your ID <span class="hint">(demo — auto-generated)</span></label>
+        <input id="fanId" name="fanId" type="text" autocomplete="off"
+               aria-describedby="fanId-help" />
+        <p id="fanId-help" class="hint">This is just who you are in the demo. You can leave it as is.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main" tabindex="-1">
+    <!-- ── Live status regions ──────────────────────────────────────────── -->
+    <div class="status-bar" aria-label="Status">
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+    </div>
+    <!-- Assertive region reserved for errors only (announced immediately). -->
+    <p id="alert" class="visually-hidden" role="alert" aria-live="assertive"></p>
+
+    <!-- ══ VENUE OVERVIEW ═══════════════════════════════════════════════ -->
+    <section id="overviewView" aria-labelledby="overviewHeading">
+      <div class="view-head">
+        <div>
+          <h2 id="overviewHeading" class="view-title">
+            <span id="venueName">Venue</span> · All sections
+          </h2>
+          <p class="view-sub">Choose a section to view its seat map.</p>
+        </div>
+        <button id="refreshBtn" type="button" class="secondary refresh-btn">
+          <span aria-hidden="true">↻</span> Refresh availability
+        </button>
+      </div>
+
+      <p id="overviewEmpty" class="empty-note">Loading sections…</p>
+
+      <!-- Tier groups + section cards are rendered here by app.js. -->
+      <div id="tierGroups" class="tier-groups"></div>
+    </section>
+
+    <!-- ══ SECTION VIEW ═════════════════════════════════════════════════ -->
+    <section id="sectionView" aria-labelledby="sectionTitle" hidden>
+      <div class="view-head">
+        <button id="backBtn" type="button" class="secondary back-btn">
+          <span aria-hidden="true">←</span> Back to all sections
+        </button>
+      </div>
+
+      <div class="section-head">
+        <h2 id="sectionTitle" class="view-title">Section</h2>
+        <p class="section-avail" role="status" aria-live="polite">
+          <span id="sectionAvail">—</span>
+        </p>
+      </div>
+
+      <section class="legend" aria-label="Seat map legend">
+        <span class="legend-item">
+          <span class="swatch swatch-available" aria-hidden="true">◻</span> Available
+        </span>
+        <span class="legend-item">
+          <span class="swatch swatch-held" aria-hidden="true">⏳</span> Booking in progress (held)
+        </span>
+        <span class="legend-item">
+          <span class="swatch swatch-sold" aria-hidden="true">✕</span> Booked (sold)
+        </span>
+        <span class="legend-note">Every seat is shown. Only green (available) seats can be held. Use Tab and the Arrow keys to move; press Enter to hold a seat.</span>
+      </section>
+
+      <div id="seatmap-region" class="panel seatmap-panel" tabindex="-1">
+        <div class="stage" aria-hidden="true">STAGE</div>
+        <div id="seatmap" class="seatmap" role="grid" aria-label="Available seats" aria-readonly="false">
+          <p class="empty-note" id="seatmapEmpty">Loading seats…</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Hold dialog ────────────────────────────────────────────────────── -->
+  <div class="overlay" id="holdOverlay" hidden>
+    <div class="dialog" id="holdDialog" role="dialog" aria-modal="true"
+         aria-labelledby="holdTitle" aria-describedby="holdInfo">
+      <h2 id="holdTitle">Seat held for you</h2>
+      <p id="holdInfo" class="dialog-info"></p>
+      <p class="dialog-amount">Amount due: <strong id="holdAmount">—</strong></p>
+      <p class="countdown">
+        Time remaining: <strong id="countdown" aria-live="off">—</strong>
+      </p>
+      <div class="dialog-actions">
+        <button id="payBtn" type="button" class="primary">Pay &amp; confirm</button>
+        <button id="releaseBtn" type="button" class="secondary">Release seat</button>
+      </div>
+      <p class="dialog-hint">Press Escape to release this hold.</p>
+    </div>
+  </div>
+
+  <!-- ── Confirmation dialog ────────────────────────────────────────────── -->
+  <div class="overlay" id="confirmOverlay" hidden>
+    <div class="dialog" id="confirmDialog" role="dialog" aria-modal="true"
+         aria-labelledby="confirmTitle" aria-describedby="confirmInfo">
+      <h2 id="confirmTitle">✓ Purchase confirmed</h2>
+      <p id="confirmInfo" class="dialog-info"></p>
+      <div class="dialog-actions">
+        <button id="doneBtn" type="button" class="primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="footnote">
+        Demo build. "Your ID" is a simple stand-in for a real login — it just
+        identifies you in this demo and is not real authentication.
+      </p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

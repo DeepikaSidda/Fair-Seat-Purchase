@@ -1,0 +1,26 @@
+{
+  // Isolated CDK tsconfig. Uses NodeNext (ESM) so `import.meta.url` and the
+  // explicit `.js` import specifiers resolve, and aws-cdk-lib subpath exports
+  // (e.g. aws-cdk-lib/aws-lambda-nodejs) type-check correctly.
+  //
+  // This config is intentionally NOT part of the root `tsc --build`; the root
+  // tsconfig excludes `infra/` so the deployment code never affects the
+  // reference-model build.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "types": ["node"],
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "noEmit": true
+  },
+  "include": ["bin/**/*.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules", "cdk.out"]
+}

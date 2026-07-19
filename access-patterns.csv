@@ -1,0 +1,13 @@
+Pattern ID,Access pattern,Requirement(s),Table/Index,Operation,Key condition,Filter / projection,Consistency
+AP1,Look up one seat's status,"R11.1, R1.9",Base,GetItem,"`PK=SEAT#v#s`, `SK=ROW#r#SEAT#n`",—,Strong (read-back)
+AP2,List available seats in a section (seat map),"R3.1, R11.3",GSI1,Query,"`GSI1PK=SECTION#v#s AND begins_with(GSI1SK,""STATUS#available"")`","projection INCLUDE {Row,Seat_Number,Seat_Status}",Eventual (R3.3)
+AP3,Section availability count,"R3.4, R11.4",GSI1 (or counter items),Query `Select=COUNT` (or GetItem counters),`GSI1PK=SECTION#v#s`,—,Eventual
+AP4,Find expired holds,"R9.2, R11.5",GSI2,Query per shard,`GSI2PK=HOLDS#k AND GSI2SK < now`,KEYS_ONLY,Eventual
+AP5,Retrieve a fan's transaction,"R2.5, R11.6",Base,Query/GetItem,"`PK=TXN#fan`, `SK=TXN#id`",—,Strong
+AP6,Hold a seat `available→held`,"R4, R11.8",Base,UpdateItem (conditional),`PK,SK` of seat,Cond `Seat_Status=available` OR expired,Strong (conditional)
+AP7,Confirm `held→sold` + txn confirm,"R6.1/6.3, R11.8",Base,TransactWriteItems,seat `PK,SK` + txn `PK,SK`,Cond seat `held` & holder match & not expired; txn `paid`,Strong
+AP8,Release `held→available` (abandon),"R6.4, R11.8",Base,UpdateItem (conditional),seat `PK,SK`,Cond `Seat_Status=held`,Strong
+AP9,Create seat (seed inventory),"R1.1, R1.2",Base,PutItem (conditional),seat `PK,SK`,Cond `attribute_not_exists(PK)`,Strong
+AP10,Create purchase transaction,"R2.1, R2.2",Base,PutItem,txn `PK,SK`,Cond `attribute_not_exists(PK)`,Strong
+AP11,List all seats in a section (colour map),"R3.1, R11.3",Base,Query,`PK=SEAT#v#s`,— (effective status computed at read time),Eventual
+AP12,List sections in a venue (catalog + price),"R3.4, R11.4",Base,Query,"`PK=VENUE#v AND begins_with(SK,""SECTION#"")`",—,Eventual

@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+coverage/
+
+# CDK
+infra/cdk.out/
+infra/outputs.json
+cdk.out/
+
+# Local DynamoDB / scratch
+.dynamodb-local/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db

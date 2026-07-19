@@ -1,0 +1,44 @@
+{
+  "name": "fair-seat-purchase",
+  "version": "1.0.0",
+  "description": "TypeScript reference model and property-based tests for the Fair Seat Purchase design challenge",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run test/integration",
+    "start": "tsx src/api/server.ts",
+    "dev": "tsx watch src/api/server.ts",
+    "db:create": "tsx scripts/create-table.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "cdk:synth": "cd infra && npx cdk synth",
+    "cdk:deploy": "cd infra && npx cdk deploy"
+  },
+  "keywords": [
+    "dynamodb",
+    "single-table",
+    "property-based-testing",
+    "fast-check"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
+    "express": "^4.21.0",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "@types/supertest": "^6.0.2",
+    "aws-cdk-lib": "^2.160.0",
+    "constructs": "^10.3.0",
+    "esbuild": "^0.24.0",
+    "fast-check": "^3.22.0",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
