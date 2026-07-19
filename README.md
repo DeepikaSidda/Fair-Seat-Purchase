@@ -13,7 +13,25 @@ application on AWS.
 Open the link, browse the tiered sections, pick a seat, hold it, and check out. Seats update
 live: 🟩 available · 🟪 booking in progress (held) · 🟥 booked (sold).
 
----
+------
+
+## Submission deliverables
+
+| # | Deliverable | File |
+|---|---|---|
+| 1 | **NoSQL Workbench data model** (valid, importable) | [`fair-seat-purchase.json`](./fair-seat-purchase.json) |
+| 2 | **Design document** (explains *why*, not just *what*) | [`DESIGN.md`](./DESIGN.md) |
+| 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv)  |
+
+### Import the NoSQL Workbench model
+1. Open **NoSQL Workbench for Amazon DynamoDB** → **Import data model**.
+2. Choose [`fair-seat-purchase.json`](./fair-seat-purchase.json).
+
+It imports one table (`FairSeatPurchase`) with **GSI1** (seat map) and **GSI2** (expired-hold
+sweep), and ≥5 representative sample items per table/index — seats in **available / held / sold**
+states and transactions in **pending / paid+confirmed / failed** states.
+------
+
 
 ## Screenshots
 
@@ -60,23 +78,6 @@ and **transactions** (no external lock service).
 
 Lifecycle: **browse → select → hold (atomic) → pay → confirm _or_ release on timeout**.
 
----
-
-## Submission deliverables
-
-| # | Deliverable | File |
-|---|---|---|
-| 1 | **NoSQL Workbench data model** (valid, importable) | [`fair-seat-purchase.json`](./fair-seat-purchase.json) |
-| 2 | **Design document** (explains *why*, not just *what*) | [`DESIGN.md`](./DESIGN.md) |
-| 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv)  |
-
-### Import the NoSQL Workbench model
-1. Open **NoSQL Workbench for Amazon DynamoDB** → **Import data model**.
-2. Choose [`fair-seat-purchase.json`](./fair-seat-purchase.json).
-
-It imports one table (`FairSeatPurchase`) with **GSI1** (seat map) and **GSI2** (expired-hold
-sweep), and ≥5 representative sample items per table/index — seats in **available / held / sold**
-states and transactions in **pending / paid+confirmed / failed** states.
 
 ---
 
