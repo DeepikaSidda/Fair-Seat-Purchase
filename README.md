@@ -62,18 +62,7 @@ live "X of Y seats available" count. Seats flip colour live as other fans hold, 
 
 ---
 
-## The problem
 
-When a popular event goes on sale, thousands of fans contend for the same seats in the same
-instant. The system must guarantee **sold-exactly-once** under that contention, expire abandoned
-holds, and instantly return released seats to inventory — all while feeling fast. This is a
-distributed inventory-control / locking problem, solved here with DynamoDB **conditional writes**
-and **transactions** (no external lock service).
-
-Lifecycle: **browse → select → hold (atomic) → pay → confirm _or_ release on timeout**.
-
-
----
 
 ## Design at a glance
 
