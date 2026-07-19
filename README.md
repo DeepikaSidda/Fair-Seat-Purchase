@@ -96,20 +96,6 @@ Browser ── HTTPS ──> CloudFront ──(OAC)──> S3 (private)         
 
 
 
----
-
-## Correctness evidence
-
-The seat/transaction state machine and its conditional-write semantics are proven by
-**property-based tests** (fast-check) covering 17 correctness properties — sold-exactly-once,
-sold-is-permanent, one-winner concurrency (up to 10,000 contenders), confirmation atomicity, hold
-expiration, and more — plus API-contract and live-DynamoDB integration tests.
-
-```bash
-npm install
-npm run build      # type-check
-npm test           # property + unit + contract tests (integration tests skip without a DB)
-```
 
 ---
 
