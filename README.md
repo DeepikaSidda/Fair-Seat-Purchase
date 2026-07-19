@@ -94,28 +94,7 @@ Browser ── HTTPS ──> CloudFront ──(OAC)──> S3 (private)         
 
 
 
----
 
-## Repository layout
-
-```
-.
-├── README.md                         # this file
-├── DESIGN.md                         # design document (deliverable 2)
-├── fair-seat-purchase.json           # NoSQL Workbench model (deliverable 1)
-├── access-patterns.csv               # access-pattern matrix (deliverable 3)
-├── architecture.md / *.svg           # architecture diagrams
-├── public/                           # static UI (HTML/CSS/JS) — hosted on S3+CloudFront
-├── src/
-│   ├── seat.ts, store.ts, transitions.ts, confirm.ts, payment.ts,
-│   │   transaction.ts, availability.ts, shard.ts, access.ts, concurrency.ts   # reference model
-│   ├── aws/          # real DynamoDB repositories (AWS SDK v3)
-│   ├── service/      # TicketingService use cases + active sweeper
-│   └── api/          # Express app, server, Lambda handler, placeholder auth
-├── scripts/          # create-table + seed scripts
-├── infra/            # AWS CDK stack (S3 + CloudFront + Lambda + API Gateway; imports the table)
-└── test/             # fast-check property tests + API contract + integration
-```
 
 ---
 
@@ -177,6 +156,4 @@ intact).
 TypeScript · AWS SDK v3 · Express · DynamoDB (single-table, GSIs, TTL, conditional writes &
 `TransactWriteItems`) · AWS CDK (S3 + CloudFront + Lambda + API Gateway) · vitest + fast-check.
 
-## License
 
-MIT.
