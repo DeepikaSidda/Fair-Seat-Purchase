@@ -13,6 +13,40 @@ application on AWS.
 Open the link, browse the tiered sections, pick a seat, hold it, and check out. Seats update
 live: 🟩 available · 🟪 booking in progress (held) · 🟥 booked (sold).
 
+---
+
+## Screenshots
+
+### 1. DynamoDB single-table model (NoSQL Workbench)
+
+![NoSQL Workbench data model](./docs/screenshots/01-nosql-workbench-model.png)
+
+The `FairSeatPurchase` single-table design imported into **NoSQL Workbench**. One table holds
+both seat and transaction entities, keyed by `PK` / `SK` (String), with **GSI1** (available-seat
+map) and **GSI2** (expired-hold sweep) in the left tree. The attribute definitions panel shows
+the full item shape: `Seat_Status`, `Holder_Identifier`, `Hold_Expiration`, `Tier`/`Price`,
+the transaction fields (`Payment_Status`, `Txn_State`, `Amount`, `Confirmation_Timestamp`), and
+the GSI key attributes — proving the model is valid and importable.
+
+### 2. Venue overview — tiered sections with live availability
+
+![Venue overview with tiered sections and prices](./docs/screenshots/02-venue-overview.png)
+
+The landing view groups the venue's 16 sections by **price tier** (VIP $499, Lower $249, Club
+$179, Upper $89, Balcony $45). Each card shows the section, tier, a price badge, and **live
+availability** as both a count and a meter — powered by per-section `Select=COUNT` queries on
+**GSI1**. Availability re-polls automatically, so held/sold seats reduce the count in near real
+time.
+
+### 3. Seat map — real-time, colour-coded seat status
+
+![Section seat map with colour-coded seats](./docs/screenshots/03-seat-map.png)
+
+Drilling into a section (here **FLR-A — VIP — $499**) renders every seat, colour-coded by live
+status: 🟩 **available** (◻, the only seats you can hold), 🟪 **booking in progress / held** (⏳),
+and 🟥 **booked / sold** (✕). Status is conveyed by glyph **and** colour (never colour alone),
+the grid is fully keyboard-navigable (Tab + Arrow keys, Enter to hold), and the header shows the
+live "X of Y seats available" count. Seats flip colour live as other fans hold, buy, or release.
 
 ---
 
