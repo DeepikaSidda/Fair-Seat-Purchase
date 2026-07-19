@@ -34,8 +34,7 @@ Lifecycle: **browse → select → hold (atomic) → pay → confirm _or_ releas
 |---|---|---|
 | 1 | **NoSQL Workbench data model** (valid, importable) | [`fair-seat-purchase.json`](./fair-seat-purchase.json) |
 | 2 | **Design document** (explains *why*, not just *what*) | [`DESIGN.md`](./DESIGN.md) |
-| 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv) (also embedded in `DESIGN.md` §2) |
-| — | Architecture diagrams (Mermaid + rendered SVG) | [`architecture.md`](./architecture.md), `architecture-1.svg`, `architecture-2.svg` |
+| 3 | **Access pattern matrix** (every pattern → table/index + key condition + filter) | [`access-patterns.csv`](./access-patterns.csv)  |
 
 ### Import the NoSQL Workbench model
 1. Open **NoSQL Workbench for Amazon DynamoDB** → **Import data model**.
@@ -93,31 +92,9 @@ Browser ── HTTPS ──> CloudFront ──(OAC)──> S3 (private)         
 - **API:** the Express app on **Lambda** behind an **API Gateway HTTP API**, CORS-enabled.
 - **Data:** a single **DynamoDB** table with GSI1/GSI2 and TTL.
 
-See [`architecture.md`](./architecture.md) for the full purchasing-flow and component diagrams
-(with the DynamoDB operation labelled at each step).
 
----
 
-## Repository layout
 
-```
-.
-├── README.md                         # this file
-├── DESIGN.md                         # design document (deliverable 2)
-├── fair-seat-purchase.json           # NoSQL Workbench model (deliverable 1)
-├── access-patterns.csv               # access-pattern matrix (deliverable 3)
-├── architecture.md / *.svg           # architecture diagrams
-├── public/                           # static UI (HTML/CSS/JS) — hosted on S3+CloudFront
-├── src/
-│   ├── seat.ts, store.ts, transitions.ts, confirm.ts, payment.ts,
-│   │   transaction.ts, availability.ts, shard.ts, access.ts, concurrency.ts   # reference model
-│   ├── aws/          # real DynamoDB repositories (AWS SDK v3)
-│   ├── service/      # TicketingService use cases + active sweeper
-│   └── api/          # Express app, server, Lambda handler, placeholder auth
-├── scripts/          # create-table + seed scripts
-├── infra/            # AWS CDK stack (S3 + CloudFront + Lambda + API Gateway; imports the table)
-└── test/             # fast-check property tests + API contract + integration
-```
 
 ---
 
@@ -179,6 +156,4 @@ intact).
 TypeScript · AWS SDK v3 · Express · DynamoDB (single-table, GSIs, TTL, conditional writes &
 `TransactWriteItems`) · AWS CDK (S3 + CloudFront + Lambda + API Gateway) · vitest + fast-check.
 
-## License
 
-MIT.
